@@ -62,6 +62,7 @@ function makeToggle(btnId, className) {
   document.getElementById(btnId).addEventListener('click', function() {
     document.body.classList.toggle(className);
     var isActive = document.body.classList.contains(className);
+    console.log('test');
     this.classList.toggle('active', isActive);
     this.setAttribute('aria-pressed', isActive);
     saveA11y();
