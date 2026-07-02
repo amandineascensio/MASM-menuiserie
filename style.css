@@ -362,6 +362,18 @@ body.dark-mode .cookie-banner__refuse:hover {
     transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
+
+  /* On coupe le mouvement (scale/pulse) mais on garde un simple fondu,
+     sans quoi le logo du loader n'a plus aucune animation au chargement */
+  .loader__logo {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .loader.split .loader__logo {
+    transition: opacity 0.6s ease !important;
+    opacity: 0 !important;
+  }
 }
 
 /* ===== PANNEAU ACCESSIBILITÉ ===== */
