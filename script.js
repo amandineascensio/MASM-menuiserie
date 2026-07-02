@@ -5,6 +5,7 @@ var fontLevel = 0;
 
 // Restore saved prefs
 (function restoreA11y() {
+  console.log('test')
   var prefs = JSON.parse(localStorage.getItem('masm_a11y') || '{}');
   if (prefs.fontLevel) { fontLevel = prefs.fontLevel; applyFontSize(); }
   if (prefs.contrast) { document.body.classList.add('high-contrast'); document.getElementById('toggleContrast').classList.add('active'); document.getElementById('toggleContrast').setAttribute('aria-pressed', 'true'); }
@@ -62,7 +63,6 @@ function makeToggle(btnId, className) {
   document.getElementById(btnId).addEventListener('click', function() {
     document.body.classList.toggle(className);
     var isActive = document.body.classList.contains(className);
-    console.log('test');
     this.classList.toggle('active', isActive);
     this.setAttribute('aria-pressed', isActive);
     saveA11y();
