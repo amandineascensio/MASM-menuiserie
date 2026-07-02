@@ -222,6 +222,8 @@ document.querySelectorAll('.navbar__mobile a').forEach(function(link) {
 });
 
 // ===== AVIS =====
+var AVIS_API = 'https://masm-menuiserie-backend.vercel.app/api/opinions';
+
 var avisList = document.getElementById('avisList');
 var avisLeft = document.getElementById('avisLeft');
 var avisRight = document.getElementById('avisRight');
@@ -230,7 +232,7 @@ var avisFormWrapper = document.getElementById('avisFormWrapper');
 var avisForm = document.getElementById('avisForm');
 var avisStarsInput = document.getElementById('avisStarsInput');
 
-var avisData = JSON.parse(localStorage.getItem('masm_avis') || '[]');
+var avisData = [];
 var avisPage = 0;
 var selectedRating = 0;
 
@@ -268,9 +270,9 @@ function renderAvis() {
     var card = document.createElement('div');
     card.className = 'avis__card';
     card.innerHTML =
-      '<div class="avis__author">' + escapeHtml(avis.nom) + '</div>' +
+      '<div class="avis__author">' + escapeHtml(avis.name) + '</div>' +
       '<div class="avis__stars">' + renderStars(avis.note) + '</div>' +
-      '<p class="avis__message">' + escapeHtml(avis.message) + '</p>';
+      '<p class="avis__message">' + escapeHtml(avis.comment) + '</p>';
     avisList.appendChild(card);
   });
 
@@ -340,6 +342,8 @@ avisToggleBtn.addEventListener('click', function() {
   avisToggleBtn.textContent = isHidden ? 'Annuler' : 'Laisser un avis';
 });
 
+var avisSubmitBtn = avisForm.querySelector('.avis__form-submit');
+
 avisForm.addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -351,19 +355,54 @@ avisForm.addEventListener('submit', function(e) {
     return;
   }
 
-  avisData.push({ nom: nom, note: selectedRating, message: message });
-  localStorage.setItem('masm_avis', JSON.stringify(avisData));
+  var originalLabel = avisSubmitBtn.textContent;
+  avisSubmitBtn.textContent = 'Envoi en cours...';
+  avisSubmitBtn.disabled = true;
 
-  avisForm.reset();
-  selectedRating = 0;
-  updateStarsInput();
-  avisFormWrapper.style.display = 'none';
-  avisToggleBtn.textContent = 'Laisser un avis';
-  avisPage = 0;
-  renderAvis();
+  fetch(AVIS_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: nom, note: selectedRating, comment: message })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('Request failed');
+    return res.json();
+  })
+  .then(function() {
+    avisForm.reset();
+    selectedRating = 0;
+    updateStarsInput();
+    avisFormWrapper.style.display = 'none';
+    avisToggleBtn.textContent = 'Laisser un avis';
+    avisSubmitBtn.textContent = originalLabel;
+    avisSubmitBtn.disabled = false;
+    avisPage = 0;
+    loadAvis();
+  })
+  .catch(function() {
+    avisSubmitBtn.textContent = originalLabel;
+    avisSubmitBtn.disabled = false;
+    alert('Une erreur est survenue lors de l\'envoi de votre avis. Veuillez réessayer.');
+  });
 });
 
-renderAvis();
+function loadAvis() {
+  fetch(AVIS_API)
+    .then(function(res) {
+      if (!res.ok) throw new Error('Request failed');
+      return res.json();
+    })
+    .then(function(payload) {
+      avisData = (payload && payload.data) || [];
+      renderAvis();
+    })
+    .catch(function() {
+      avisData = [];
+      renderAvis();
+    });
+}
+
+loadAvis();
 
 // ===== BACK TO TOP =====
 var backToTop = document.getElementById('backToTop');
