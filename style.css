@@ -556,6 +556,9 @@ body.dark-mode .cookie-banner__refuse:hover {
   width: 160px;
   height: auto;
   animation: loaderPulse 1.6s ease-in-out infinite;
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .loader.split .loader__logo {
