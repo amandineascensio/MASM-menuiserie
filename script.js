@@ -117,23 +117,10 @@ function initReveal() {
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (!entry.isIntersecting) return;
-
-      var parent = entry.target.closest('.realisations__grid, .methode__grid');
-
-      if (parent && !parent.dataset.revealed) {
-        parent.dataset.revealed = 'true';
-        parent.querySelectorAll('.reveal').forEach(function(item, i) {
-          setTimeout(function() {
-            item.classList.add('visible');
-          }, i * 100);
-        });
-      } else if (!parent) {
-        entry.target.classList.add('visible');
-      }
-
+      entry.target.classList.add('visible');
       observer.unobserve(entry.target);
     });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
 
   revealEls.forEach(function(el) {
     observer.observe(el);
