@@ -1503,7 +1503,8 @@ body.dark-mode .cookie-banner__refuse:hover {
 }
 
 .footer__socials {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
   justify-content: center;
   gap: 16px;
 }
